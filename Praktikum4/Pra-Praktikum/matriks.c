@@ -123,5 +123,60 @@ void pMultiplyByConst(Matrix *m, ElType k){
 }
 
 boolean isMatrixEqual(Matrix m1, Matrix m2){
+    if (getLastIdxCol(m1) != getLastIdxCol(m2) || getLastIdxRow(m1) != getLastIdxRow(m2)){
+        return false;
+    }
+    int i;
+    int j;
+    for (i = 0; i < getLastIdxRow(m1); i++){
+        for (j = 0; j < getLastIdxCol(m1); j++){
+            if (ELMT(m1, i, j) != ELMT(m2, i, j)){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+boolean isMatrixNotEqual(Matrix m1, Matrix m2){
+    return !isMatrixEqual(m1, m2);
+}
+
+boolean isMatrixSizeEqual(Matrix m1, Matrix m2){
+    return (getLastIdxRow(m1) == getLastIdxRow(m2) && getLastIdxCol(m1) == getLastIdxCol(m2));
+}
+
+int countElmt(Matrix m){
+    return (getLastIdxCol(m) * getLastIdxRow(m));
+}
+
+boolean isSquare(Matrix m){
+    return (getLastIdxCol(m) == getLastIdxRow(m));
+}
+
+boolean isSymmetric(Matrix m){
+    int i;
+    int j;
+    for (i = 0; i < getLastIdxRow(m); i++){
+        for (j = 0; j < getLastIdxRow(m); j++){
+            if (ELMT(m, i, j) != ELMT(m, j, i)){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+boolean isIdentity(Matrix m){
+    int i;
+    for (i = 0; i < getLastIdxRow(m); i++){
+        if (getElmtDiagonal(m, i) != 1){
+            return false;
+        }
+    }
+    return true;
+}
+
+boolean isSparse(Matrix m){
     
 }
