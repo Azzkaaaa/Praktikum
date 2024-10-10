@@ -180,3 +180,7 @@ boolean isIdentity(Matrix m){
 boolean isSparse(Matrix m){
     
 }
+
+Matrix negation(Matrix m){
+    
+}
