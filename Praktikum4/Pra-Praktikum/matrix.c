@@ -1,219 +1,212 @@
-#include "matrix.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include "boolean.h"
+#include "matrix.h"
 
-void createMatrix(int nRows, int nCols, Matrix *m){
+/* *** Konstruktor membentuk Matrix *** */
+void createMatrix(int nRows, int nCols, Matrix *m) {
     ROW_EFF(*m) = nRows;
     COL_EFF(*m) = nCols;
 }
 
-boolean isMatrixIdxValid(int i, int j){
-    return(i <= 0 && j <= 0);
+/* *** Selektor "Dunia Matrix" *** */
+boolean isMatrixIdxValid(int i, int j) {
+    return (i >= 0 && i < ROW_CAP && j >= 0 && j < COL_CAP);
 }
 
-IdxType getLastIdxRow(Matrix m){
+/* *** Selektor: Untuk sebuah matriks m yang terdefinisi: *** */
+IdxType getLastIdxRow(Matrix m) {
     return ROW_EFF(m) - 1;
 }
 
-IdxType getLastIdxCol(Matrix m){
+IdxType getLastIdxCol(Matrix m) {
     return COL_EFF(m) - 1;
 }
 
-boolean isIdxEff(Matrix m, IdxType i, IdxType j){
-    return (ELMT(m, i, j) == ELMT(m, ROW_EFF(m) - 1, COL_EFF(m) - 1));
+boolean isIdxEff(Matrix m, IdxType i, IdxType j) {
+    return (i >= 0 && i < ROW_EFF(m) && j >= 0 && j < COL_EFF(m));
 }
 
-ElType getElmtDiagonal(Matrix m, IdxType i){
+ElType getElmtDiagonal(Matrix m, IdxType i) {
     return ELMT(m, i, i);
 }
 
-void copyMatrix(Matrix mIn, Matrix *mOut){
-    int i;
-    int j;
-    for (i = 0; i < ROW_EFF(mIn); i++){
-        for (j = 0; j < COL_EFF(mIn); j++){
+/* ********** Assignment  Matrix ********** */
+void copyMatrix(Matrix mIn, Matrix *mOut) {
+    createMatrix(ROW_EFF(mIn), COL_EFF(mIn), mOut);
+    for (int i = 0; i < ROW_EFF(mIn); i++) {
+        for (int j = 0; j < COL_EFF(mIn); j++) {
             ELMT(*mOut, i, j) = ELMT(mIn, i, j);
         }
     }
 }
 
-void readMatrix(Matrix *m, int nRow, int nCol){
-    int i;
-    int j;
-    isMatrixIdxValid(nRow, nCol);
-    createMatrix(m, nRow, nCol);
-    for (i = 0; i < ROW_EFF(*m); i++){
-        for (j = 0; j < COL_EFF(*m); j++){
+/* ********** KELOMPOK BACA/TULIS ********** */
+void readMatrix(Matrix *m, int nRow, int nCol) {
+    createMatrix(nRow, nCol, m);
+    for (int i = 0; i < nRow; i++) {
+        for (int j = 0; j < nCol; j++) {
             scanf("%d", &ELMT(*m, i, j));
         }
     }
 }
 
-void displayMatrix(Matrix m){
-    int i;
-    int j;
-    for (i = 0; i < ROW_EFF(m); i++){
-        for (j = 0; j < COL_EFF(m); j++){
+void displayMatrix(Matrix m) {
+    for (int i = 0; i < ROW_EFF(m); i++) {
+        for (int j = 0; j < COL_EFF(m); j++) {
             printf("%d", ELMT(m, i, j));
-            if (j != getLastIdxCol(m) - 1){
+            if (j < COL_EFF(m) - 1) {
                 printf(" ");
             }
         }
-        printf("\n");
+        if (i < ROW_EFF(m) - 1) {
+            printf("\n");
+        }
     }
 }
 
-Matrix addMatrix(Matrix m1, Matrix m2){
-    int i;
-    int j;
+/* ********** KELOMPOK OPERASI ARITMATIKA TERHADAP TYPE ********** */
+Matrix addMatrix(Matrix m1, Matrix m2) {
     Matrix result;
-    createMatrix(&result, ROW_EFF(m1), COL_EFF(m1));
-    for (i = 0; i < ROW_EFF(m1); i++){
-        for (j = 0; j < COL_EFF(m1); j++){
+    createMatrix(ROW_EFF(m1), COL_EFF(m1), &result);
+    for (int i = 0; i < ROW_EFF(m1); i++) {
+        for (int j = 0; j < COL_EFF(m1); j++) {
             ELMT(result, i, j) = ELMT(m1, i, j) + ELMT(m2, i, j);
         }
     }
     return result;
 }
 
-Matrix subtractMatrix(Matrix m1, Matrix m2){
-    int i;
-    int j;
+Matrix subtractMatrix(Matrix m1, Matrix m2) {
     Matrix result;
-    createMatrix(&result, ROW_EFF(m1), COL_EFF(m1));
-    for (i = 0; i < ROW_EFF(m1); i++){
-        for (j = 0; j < COL_EFF(m1); j++){
+    createMatrix(ROW_EFF(m1), COL_EFF(m1), &result);
+    for (int i = 0; i < ROW_EFF(m1); i++) {
+        for (int j = 0; j < COL_EFF(m1); j++) {
             ELMT(result, i, j) = ELMT(m1, i, j) - ELMT(m2, i, j);
         }
     }
     return result;
 }
 
-Matrix multiplyMatrix(Matrix m1, Matrix m2){
-    int i;
-    int j;
+Matrix multiplyMatrix(Matrix m1, Matrix m2) {
     Matrix result;
-    createMatrix(&result, ROW_EFF(m1), COL_EFF(m1));
-    for (i = 0; i < ROW_EFF(m1); i++){
-        for (j = 0; j < COL_EFF(m1); j++){
-            ELMT(result, i, j) = ELMT(m1, i, j) * ELMT(m2, i, j);
+    createMatrix(ROW_EFF(m1), COL_EFF(m2), &result);
+    for (int i = 0; i < ROW_EFF(m1); i++) {
+        for (int j = 0; j < COL_EFF(m2); j++) {
+            ELMT(result, i, j) = 0; // Initialize element to 0
+            for (int k = 0; k < COL_EFF(m1); k++) {
+                ELMT(result, i, j) += ELMT(m1, i, k) * ELMT(m2, k, j);
+            }
         }
     }
     return result;
 }
 
-Matrix multiplyByConst(Matrix m, ElType x){
-    int i;
-    int j;
-    for (i = 0; i < ROW_EFF(m); i++){
-        for (j = 0; j < COL_EFF(m); j++){
-            ELMT(m, i, j) = ELMT(m, i, j) * x;
+Matrix multiplyByConst(Matrix m, ElType x) {
+    Matrix result;
+    createMatrix(ROW_EFF(m), COL_EFF(m), &result);
+    for (int i = 0; i < ROW_EFF(m); i++) {
+        for (int j = 0; j < COL_EFF(m); j++) {
+            ELMT(result, i, j) = ELMT(m, i, j) * x;
         }
     }
-    return m;
+    return result;
 }
 
-void pMultiplyByConst(Matrix *m, ElType k){
-    int i;
-    int j;
-    for (i = 0; i < ROW_EFF(*m); i++){
-        for (j = 0; j < COL_EFF(*m); j++){
-            ELMT(*m, i, j) = ELMT(*m, i, j) * k;
+void pMultiplyByConst(Matrix *m, ElType k) {
+    for (int i = 0; i < ROW_EFF(*m); i++) {
+        for (int j = 0; j < COL_EFF(*m); j++) {
+            ELMT(*m, i, j) *= k;
         }
     }
 }
 
-boolean isMatrixEqual(Matrix m1, Matrix m2){
-    if (getLastIdxCol(m1) != getLastIdxCol(m2) || getLastIdxRow(m1) != getLastIdxRow(m2)){
-        return false;
-    }
-    int i;
-    int j;
-    for (i = 0; i < getLastIdxRow(m1); i++){
-        for (j = 0; j < getLastIdxCol(m1); j++){
-            if (ELMT(m1, i, j) != ELMT(m2, i, j)){
-                return false;
-            }
+/* ********** KELOMPOK OPERASI RELASIONAL TERHADAP Matrix ********** */
+boolean isMatrixEqual(Matrix m1, Matrix m2) {
+    if (!isMatrixSizeEqual(m1, m2)) return false;
+    for (int i = 0; i < ROW_EFF(m1); i++) {
+        for (int j = 0; j < COL_EFF(m1); j++) {
+            if (ELMT(m1, i, j) != ELMT(m2, i, j)) return false;
         }
     }
     return true;
 }
 
-boolean isMatrixNotEqual(Matrix m1, Matrix m2){
+boolean isMatrixNotEqual(Matrix m1, Matrix m2) {
     return !isMatrixEqual(m1, m2);
 }
 
-boolean isMatrixSizeEqual(Matrix m1, Matrix m2){
-    return (getLastIdxRow(m1) == getLastIdxRow(m2) && getLastIdxCol(m1) == getLastIdxCol(m2));
+boolean isMatrixSizeEqual(Matrix m1, Matrix m2) {
+    return (ROW_EFF(m1) == ROW_EFF(m2)) && (COL_EFF(m1) == COL_EFF(m2));
 }
 
-int countElmt(Matrix m){
-    return (getLastIdxCol(m) * getLastIdxRow(m));
+/* ********** Operasi lain ********** */
+int countElmt(Matrix m) {
+    return ROW_EFF(m) * COL_EFF(m);
 }
 
-boolean isSquare(Matrix m){
-    return (getLastIdxCol(m) == getLastIdxRow(m));
+/* ********** KELOMPOK TEST TERHADAP Matrix ********** */
+boolean isSquare(Matrix m) {
+    return (ROW_EFF(m) == COL_EFF(m));
 }
 
-boolean isSymmetric(Matrix m){
-    int i;
-    int j;
-    for (i = 0; i < getLastIdxRow(m); i++){
-        for (j = 0; j < getLastIdxRow(m); j++){
-            if (ELMT(m, i, j) != ELMT(m, j, i)){
-                return false;
+boolean isSymmetric(Matrix m) {
+    if (!isSquare(m)) return false;
+    for (int i = 0; i < ROW_EFF(m); i++) {
+        for (int j = 0; j < i; j++) {
+            if (ELMT(m, i, j) != ELMT(m, j, i)) return false;
+        }
+    }
+    return true;
+}
+
+boolean isIdentity(Matrix m) {
+    if (!isSquare(m)) return false;
+    for (int i = 0; i < ROW_EFF(m); i++) {
+        for (int j = 0; j < COL_EFF(m); j++) {
+            if (i == j) {
+                if (ELMT(m, i, j) != 1) return false;
+            } else {
+                if (ELMT(m, i, j) != 0) return false;
             }
         }
     }
     return true;
 }
 
-boolean isIdentity(Matrix m){
-    int i;
-    for (i = 0; i < getLastIdxRow(m); i++){
-        if (getElmtDiagonal(m, i) != 1){
-            return false;
-        }
-    }
-    return true;
-}
-
-boolean isSparse(Matrix m){
-    int i;
-    int j;
-    int countNonZero;
-    countNonZero = 0;
-    for (i = 0; i < getLastIdxRow(m); i++){
-        for (j = 0; j < getLastIdxCol(m); j++){
-            if (ELMT(m, i, j) != 0){
+boolean isSparse(Matrix m) {
+    int countNonZero = 0;
+    for (int i = 0; i < ROW_EFF(m); i++) {
+        for (int j = 0; j < COL_EFF(m); j++) {
+            if (ELMT(m, i, j) != 0) {
                 countNonZero++;
             }
         }
     }
-    return (countNonZero <= 0.05 * countElmt(m) );
+    return (countNonZero <= 0.05 * countElmt(m)); // 5% dari total elemen
 }
 
-Matrix negation(Matrix m){
+Matrix negation(Matrix m) {
     Matrix result;
-    int i;
-    int j;
     createMatrix(ROW_EFF(m), COL_EFF(m), &result);
-    for (i = 0; i < getLastIdxRow(m); i++){
-        for (j = 0; j < getLastIdxCol(m); j++){
+    for (int i = 0; i < ROW_EFF(m); i++) {
+        for (int j = 0; j < COL_EFF(m); j++) {
             ELMT(result, i, j) = -ELMT(m, i, j);
         }
     }
     return result;
 }
 
-void pNegation(Matrix *m){
-    int i;
-    int j;
-    for (i = 0; i < getLastIdxRow(*m); i++){
-        for (j = 0; j < getLastIdxCol(*m); j++){
+void pNegation(Matrix *m) {
+    for (int i = 0; i < ROW_EFF(*m); i++) {
+        for (int j = 0; j < COL_EFF(*m); j++) {
             ELMT(*m, i, j) = -ELMT(*m, i, j);
         }
     }
 }
+
+/* Determinan dan Transpose tidak diimplementasikan di sini */
+
 
 /* Fungsi untuk menghitung determinan matriks */
 float determinant(Matrix m) {
