@@ -59,6 +59,7 @@
   "files.associations": {
     "stdio.h": "c",
     "listdin.h": "c",
-    "boolean.h": "c"
+    "boolean.h": "c",
+    "functional": "c"
   }
 }
