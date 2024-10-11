@@ -178,9 +178,30 @@ boolean isIdentity(Matrix m){
 }
 
 boolean isSparse(Matrix m){
-    
+    int i;
+    int j;
+    int countNonZero;
+    countNonZero = 0;
+    for (i = 0; i < getLastIdxRow(m); i++){
+        for (j = 0; j < getLastIdxCol(m); j++){
+            if (ELMT(m, i, j) != 0){
+                countNonZero++;
+            }
+        }
+    }
+    return (countNonZero <= 0.05 * countElmt(m) );
 }
 
 Matrix negation(Matrix m){
-    
+    Matrix result;
+    int i;
+    int j;
+    createMatrix(ROW_EFF(m), COL_EFF(m), &result);
+    for (i = 0; i < getLastIdxRow(m); i++){
+        for (j = 0; j < getLastIdxCol(m); j++){
+            ELMT(result, i, j) = -ELMT(m, i, j);
+        }
+    }
+    return result;
 }
+
