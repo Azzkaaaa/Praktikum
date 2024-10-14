@@ -205,7 +205,6 @@ void pNegation(Matrix *m) {
     }
 }
 
-/* Determinan dan Transpose tidak diimplementasikan di sini */
 
 
 /* Fungsi untuk menghitung determinan matriks */
