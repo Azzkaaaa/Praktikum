@@ -1,5 +1,6 @@
 #include "listdin.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 
 void CreateListDin(ListDin *l, int capacity){

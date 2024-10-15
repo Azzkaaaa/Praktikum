@@ -8,6 +8,7 @@
 #define LISTDIN_H
 
 #include "boolean.h"
+#include <stdlib.h>
 
 /*  Kamus Umum */
 #define IDX_MIN 0
