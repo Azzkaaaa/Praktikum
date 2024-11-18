@@ -61,6 +61,7 @@
     "listdin.h": "c",
     "boolean.h": "c",
     "functional": "c",
-    "stack.h": "c"
+    "stack.h": "c",
+    "queue.h": "c"
   }
 }
